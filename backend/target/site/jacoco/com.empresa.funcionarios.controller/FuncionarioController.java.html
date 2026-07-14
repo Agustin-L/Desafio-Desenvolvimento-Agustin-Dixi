@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FuncionarioController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funcionarios</a> &gt; <a href="index.source.html" class="el_package">com.empresa.funcionarios.controller</a> &gt; <span class="el_source">FuncionarioController.java</span></div><h1>FuncionarioController.java</h1><pre class="source lang-java linenums">package com.empresa.funcionarios.controller;
+
+import com.empresa.funcionarios.dto.request.FuncionarioRequestDTO;
+import com.empresa.funcionarios.dto.response.FuncionarioResponseDTO;
+import com.empresa.funcionarios.service.FuncionarioService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/funcionarios&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+<span class="nc" id="L17">public class FuncionarioController {</span>
+
+    @Autowired
+    private FuncionarioService funcionarioService;
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;FuncionarioResponseDTO&gt;&gt; listar(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String cpf,
+            @RequestParam(required = false) String matricula,
+            @RequestParam(required = false) String empresa,
+            @RequestParam(required = false) Long cargoId,
+            @RequestParam(required = false) Long departamentoId,
+            @RequestParam(required = false) Boolean ativo
+    ) {
+<span class="nc" id="L32">        return ResponseEntity.ok(funcionarioService.listarComFiltros(nome, cpf, matricula, empresa, cargoId, departamentoId, ativo));</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;FuncionarioResponseDTO&gt; buscarPorId(@PathVariable Long id) {
+<span class="nc" id="L37">        return ResponseEntity.ok(funcionarioService.buscarPorId(id));</span>
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;FuncionarioResponseDTO&gt; cadastrar(@Valid @RequestBody FuncionarioRequestDTO request) {
+<span class="nc" id="L42">        FuncionarioResponseDTO response = funcionarioService.salvar(request);</span>
+<span class="nc" id="L43">        return ResponseEntity.status(HttpStatus.CREATED).body(response);</span>
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;FuncionarioResponseDTO&gt; editar(@PathVariable Long id, @Valid @RequestBody FuncionarioRequestDTO request) {
+<span class="nc" id="L48">        return ResponseEntity.ok(funcionarioService.editar(id, request));</span>
+    }
+
+    // Regra CLT: não existe exclusão de funcionário — apenas inativação/reativação
+    @PatchMapping(&quot;/{id}/inativar&quot;)
+    public ResponseEntity&lt;FuncionarioResponseDTO&gt; inativar(@PathVariable Long id) {
+<span class="nc" id="L54">        return ResponseEntity.ok(funcionarioService.inativar(id));</span>
+    }
+
+    @PatchMapping(&quot;/{id}/reativar&quot;)
+    public ResponseEntity&lt;FuncionarioResponseDTO&gt; reativar(@PathVariable Long id) {
+<span class="nc" id="L59">        return ResponseEntity.ok(funcionarioService.reativar(id));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

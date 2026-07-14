@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: com.empresa.funcionarios.service.CargoServiceTest
+-------------------------------------------------------------------------------
+Tests run: 9, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.231 s <<< FAILURE! -- in com.empresa.funcionarios.service.CargoServiceTest
+com.empresa.funcionarios.service.CargoServiceTest.deletarRemoveCargoExistente -- Time elapsed: 0.004 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.empresa.funcionarios.repository.VinculoRepository.existsByCargoId(java.lang.Long)" because "this.vinculoRepository" is null
+	at com.empresa.funcionarios.service.CargoService.deletar(CargoService.java:66)
+	at com.empresa.funcionarios.service.CargoServiceTest.deletarRemoveCargoExistente(CargoServiceTest.java:124)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+

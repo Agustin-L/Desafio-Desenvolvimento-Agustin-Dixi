@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DepartamentoService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funcionarios</a> &gt; <a href="index.source.html" class="el_package">com.empresa.funcionarios.service</a> &gt; <span class="el_source">DepartamentoService.java</span></div><h1>DepartamentoService.java</h1><pre class="source lang-java linenums">package com.empresa.funcionarios.service;
+
+import com.empresa.funcionarios.dto.request.DepartamentoRequestDTO;
+import com.empresa.funcionarios.dto.response.DepartamentoResponseDTO;
+import com.empresa.funcionarios.model.Departamento;
+import com.empresa.funcionarios.repository.DepartamentoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+<span class="fc" id="L13">public class DepartamentoService {</span>
+
+    @Autowired
+    private DepartamentoRepository departamentoRepository;
+
+    public List&lt;DepartamentoResponseDTO&gt; listarTodos() {
+<span class="fc" id="L19">        return departamentoRepository.findAll().stream()</span>
+<span class="fc" id="L20">                .map(depto -&gt; new DepartamentoResponseDTO(depto.getId(), depto.getCodigo(), depto.getDescricao()))</span>
+<span class="fc" id="L21">                .toList();</span>
+    }
+
+    public DepartamentoResponseDTO salvar(DepartamentoRequestDTO request) {
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        if (departamentoRepository.existsByCodigo(request.getCodigo())) {</span>
+<span class="fc" id="L26">            throw new RuntimeException(&quot;Já existe um departamento cadastrado com este código!&quot;);</span>
+        }
+
+<span class="fc" id="L29">        Departamento deptoModel = new Departamento();</span>
+<span class="fc" id="L30">        deptoModel.setCodigo(request.getCodigo());</span>
+<span class="fc" id="L31">        deptoModel.setDescricao(request.getDescricao());</span>
+
+<span class="fc" id="L33">        Departamento deptoSalvo = departamentoRepository.save(deptoModel);</span>
+
+<span class="fc" id="L35">        return new DepartamentoResponseDTO(deptoSalvo.getId(), deptoSalvo.getCodigo(), deptoSalvo.getDescricao());</span>
+    }
+
+    public DepartamentoResponseDTO buscarPorId(Long id) {
+<span class="fc" id="L39">        Departamento depto = departamentoRepository.findById(id)</span>
+<span class="fc" id="L40">                .orElseThrow(() -&gt; new RuntimeException(&quot;Departamento não encontrado com o ID: &quot; + id));</span>
+
+<span class="fc" id="L42">        return new DepartamentoResponseDTO(depto.getId(), depto.getCodigo(), depto.getDescricao());</span>
+    }
+
+    public DepartamentoResponseDTO editar(Long id, DepartamentoRequestDTO request) {
+<span class="fc" id="L46">        Departamento deptoExistente = departamentoRepository.findById(id)</span>
+<span class="fc" id="L47">                .orElseThrow(() -&gt; new RuntimeException(&quot;Departamento não encontrado para edição!&quot;));</span>
+
+<span class="fc" id="L49">        deptoExistente.setCodigo(request.getCodigo());</span>
+<span class="fc" id="L50">        deptoExistente.setDescricao(request.getDescricao());</span>
+
+<span class="fc" id="L52">        Departamento deptoAtualizado = departamentoRepository.save(deptoExistente);</span>
+
+<span class="fc" id="L54">        return new DepartamentoResponseDTO(deptoAtualizado.getId(), deptoAtualizado.getCodigo(), deptoAtualizado.getDescricao());</span>
+    }
+
+    public void deletar(Long id) {
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (!departamentoRepository.existsById(id)) {</span>
+<span class="fc" id="L59">            throw new RuntimeException(&quot;Departamento não encontrado para exclusão!&quot;);</span>
+        }
+<span class="fc" id="L61">        departamentoRepository.deleteById(id);</span>
+<span class="fc" id="L62">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

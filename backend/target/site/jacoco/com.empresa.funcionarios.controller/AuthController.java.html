@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funcionarios</a> &gt; <a href="index.source.html" class="el_package">com.empresa.funcionarios.controller</a> &gt; <span class="el_source">AuthController.java</span></div><h1>AuthController.java</h1><pre class="source lang-java linenums">package com.empresa.funcionarios.controller;
+
+import com.empresa.funcionarios.dto.request.LoginRequestDTO;
+import com.empresa.funcionarios.dto.response.LoginResponseDTO;
+import com.empresa.funcionarios.security.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(&quot;/api/auth&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+<span class="nc" id="L20">public class AuthController {</span>
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @PostMapping(&quot;/login&quot;)
+    public ResponseEntity&lt;LoginResponseDTO&gt; login(@RequestBody LoginRequestDTO request) {
+        try {
+<span class="nc" id="L34">            authenticationManager.authenticate(</span>
+<span class="nc" id="L35">                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getSenha())</span>
+            );
+<span class="nc" id="L37">        } catch (BadCredentialsException ex) {</span>
+<span class="nc" id="L38">            throw new RuntimeException(&quot;Usuário ou senha inválidos!&quot;);</span>
+<span class="nc" id="L39">        }</span>
+
+<span class="nc" id="L41">        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());</span>
+<span class="nc" id="L42">        String token = jwtService.gerarToken(userDetails);</span>
+
+<span class="nc" id="L44">        return ResponseEntity.ok(new LoginResponseDTO(token, userDetails.getUsername(), extrairPerfil(userDetails)));</span>
+    }
+
+    @GetMapping(&quot;/me&quot;)
+    public ResponseEntity&lt;LoginResponseDTO&gt; me(Authentication authentication) {
+<span class="nc" id="L49">        UserDetails userDetails = (UserDetails) authentication.getPrincipal();</span>
+<span class="nc" id="L50">        return ResponseEntity.ok(new LoginResponseDTO(null, userDetails.getUsername(), extrairPerfil(userDetails)));</span>
+    }
+
+    private String extrairPerfil(UserDetails userDetails) {
+<span class="nc" id="L54">        return userDetails.getAuthorities().stream()</span>
+<span class="nc" id="L55">                .findFirst()</span>
+<span class="nc" id="L56">                .map(GrantedAuthority::getAuthority)</span>
+<span class="nc" id="L57">                .orElse(&quot;ROLE_PADRAO&quot;)</span>
+<span class="nc" id="L58">                .replace(&quot;ROLE_&quot;, &quot;&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

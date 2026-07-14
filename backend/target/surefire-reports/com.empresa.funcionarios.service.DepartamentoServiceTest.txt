@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: com.empresa.funcionarios.service.DepartamentoServiceTest
+-------------------------------------------------------------------------------
+Tests run: 9, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.083 s <<< FAILURE! -- in com.empresa.funcionarios.service.DepartamentoServiceTest
+com.empresa.funcionarios.service.DepartamentoServiceTest.deletarRemoveDepartamentoExistente -- Time elapsed: 0.003 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.empresa.funcionarios.repository.VinculoRepository.existsByDepartamentoId(java.lang.Long)" because "this.vinculoRepository" is null
+	at com.empresa.funcionarios.service.DepartamentoService.deletar(DepartamentoService.java:67)
+	at com.empresa.funcionarios.service.DepartamentoServiceTest.deletarRemoveDepartamentoExistente(DepartamentoServiceTest.java:125)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+

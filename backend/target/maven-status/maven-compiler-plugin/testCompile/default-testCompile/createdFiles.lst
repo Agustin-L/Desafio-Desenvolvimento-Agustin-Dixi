@@ -1,0 +1,8 @@
+com\empresa\funcionarios\service\DepartamentoServiceTest.class
+com\empresa\funcionarios\service\FuncionarioServiceTest.class
+com\empresa\funcionarios\service\CargoServiceTest.class
+com\empresa\funcionarios\service\UsuarioServiceTest.class
+com\empresa\funcionarios\validation\CpfValidoValidatorTest.class
+com\empresa\funcionarios\service\RelatorioServiceTest.class
+com\empresa\funcionarios\service\VinculoServiceTest.class
+com\empresa\funcionarios\repository\FuncionarioRepositorioFiltroTest.class

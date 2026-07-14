@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CargoService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funcionarios</a> &gt; <a href="index.source.html" class="el_package">com.empresa.funcionarios.service</a> &gt; <span class="el_source">CargoService.java</span></div><h1>CargoService.java</h1><pre class="source lang-java linenums">package com.empresa.funcionarios.service;
+
+import com.empresa.funcionarios.dto.request.CargoRequestDTO;
+import com.empresa.funcionarios.dto.response.CargoResponseDTO;
+import com.empresa.funcionarios.model.Cargo;
+import com.empresa.funcionarios.repository.CargoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+<span class="fc" id="L13">public class CargoService {</span>
+
+    @Autowired
+    private CargoRepository cargoRepository;
+
+    public List&lt;CargoResponseDTO&gt; listarTodos() {
+<span class="fc" id="L19">        return cargoRepository.findAll().stream()</span>
+<span class="fc" id="L20">                .map(cargo -&gt; new CargoResponseDTO(cargo.getId(), cargo.getCodigo(), cargo.getDescricao()))</span>
+<span class="fc" id="L21">                .toList();</span>
+    }
+
+    public CargoResponseDTO salvar(CargoRequestDTO request) {
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        if (cargoRepository.existsByCodigo(request.getCodigo())) {</span>
+<span class="fc" id="L26">            throw new RuntimeException(&quot;Já existe um cargo cadastrado com este código!&quot;);</span>
+        }
+
+<span class="fc" id="L29">        Cargo cargoModel = new Cargo();</span>
+<span class="fc" id="L30">        cargoModel.setCodigo(request.getCodigo());</span>
+<span class="fc" id="L31">        cargoModel.setDescricao(request.getDescricao());</span>
+
+<span class="fc" id="L33">        Cargo cargoSalvo = cargoRepository.save(cargoModel);</span>
+
+<span class="fc" id="L35">        return new CargoResponseDTO(cargoSalvo.getId(), cargoSalvo.getCodigo(), cargoSalvo.getDescricao());</span>
+    }
+
+    public CargoResponseDTO buscarPorId(Long id) {
+<span class="fc" id="L39">        Cargo cargo = cargoRepository.findById(id)</span>
+<span class="fc" id="L40">                .orElseThrow(() -&gt; new RuntimeException(&quot;Cargo não encontrado com o ID: &quot; + id));</span>
+
+<span class="fc" id="L42">        return new CargoResponseDTO(cargo.getId(), cargo.getCodigo(), cargo.getDescricao());</span>
+    }
+
+    public CargoResponseDTO editar(Long id, CargoRequestDTO request) {
+<span class="fc" id="L46">        Cargo cargoExistente = cargoRepository.findById(id)</span>
+<span class="fc" id="L47">                .orElseThrow(() -&gt; new RuntimeException(&quot;Cargo não encontrado para edição!&quot;));</span>
+
+<span class="fc" id="L49">        cargoExistente.setDescricao(request.getDescricao());</span>
+
+<span class="fc" id="L51">        Cargo cargoAtualizado = cargoRepository.save(cargoExistente);</span>
+
+<span class="fc" id="L53">        return new CargoResponseDTO(cargoAtualizado.getId(), cargoAtualizado.getCodigo(), cargoAtualizado.getDescricao());</span>
+    }
+
+    public void deletar(Long id) {
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (!cargoRepository.existsById(id)) {</span>
+<span class="fc" id="L58">            throw new RuntimeException(&quot;Cargo não encontrado para exclusão!&quot;);</span>
+        }
+<span class="fc" id="L60">        cargoRepository.deleteById(id);</span>
+<span class="fc" id="L61">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

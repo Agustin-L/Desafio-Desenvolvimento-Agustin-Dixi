@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Vinculo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funcionarios</a> &gt; <a href="index.source.html" class="el_package">com.empresa.funcionarios.model</a> &gt; <span class="el_source">Vinculo.java</span></div><h1>Vinculo.java</h1><pre class="source lang-java linenums">package com.empresa.funcionarios.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = &quot;vinculos&quot;)
+public class Vinculo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String empresa;
+
+    @Column(nullable = false)
+    private String matricula;
+
+    @ManyToOne
+    private Cargo cargo;
+
+    @ManyToOne
+    private Funcionario funcionario;
+
+    @ManyToOne
+    private Departamento departamento;
+
+<span class="fc" id="L28">    public Vinculo() {</span>
+<span class="fc" id="L29">    }</span>
+
+    public Long getId() {
+<span class="fc" id="L32">        return id;</span>
+    }
+
+    public String getEmpresa() {
+<span class="fc" id="L36">        return empresa;</span>
+    }
+
+    public String getMatricula() {
+<span class="fc" id="L40">        return matricula;</span>
+    }
+
+    public Cargo getCargo() {
+<span class="fc" id="L44">        return cargo;</span>
+    }
+
+    public Funcionario getFuncionario() {
+<span class="fc" id="L48">        return funcionario;</span>
+    }
+
+    public Departamento getDepartamento() {
+<span class="fc" id="L52">        return departamento;</span>
+    }
+
+    public void setEmpresa(String empresa) {
+<span class="fc" id="L56">        this.empresa = empresa;</span>
+<span class="fc" id="L57">    }</span>
+
+    public void setMatricula(String matricula) {
+<span class="fc" id="L60">        this.matricula = matricula;</span>
+<span class="fc" id="L61">    }</span>
+
+    public void setCargo(Cargo cargo) {
+<span class="fc" id="L64">        this.cargo = cargo;</span>
+<span class="fc" id="L65">    }</span>
+
+    public void setFuncionario(Funcionario funcionario) {
+<span class="fc" id="L68">        this.funcionario = funcionario;</span>
+<span class="fc" id="L69">    }</span>
+
+    public void setDepartamento(Departamento departamento) {
+<span class="fc" id="L72">        this.departamento = departamento;</span>
+<span class="fc" id="L73">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

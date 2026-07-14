@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FuncionarioService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">funcionarios</a> &gt; <a href="index.source.html" class="el_package">com.empresa.funcionarios.service</a> &gt; <span class="el_source">FuncionarioService.java</span></div><h1>FuncionarioService.java</h1><pre class="source lang-java linenums">package com.empresa.funcionarios.service;
+
+import com.empresa.funcionarios.dto.request.FuncionarioRequestDTO;
+import com.empresa.funcionarios.dto.response.FuncionarioResponseDTO;
+import com.empresa.funcionarios.model.Funcionario;
+import com.empresa.funcionarios.repository.FuncionarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+<span class="fc" id="L13">public class FuncionarioService {</span>
+
+    @Autowired
+    private FuncionarioRepository funcionarioRepository;
+
+    public List&lt;FuncionarioResponseDTO&gt; listarComFiltros(String nome, String cpf, String matricula, String empresa, Long cargoId, Long departamentoId, Boolean ativo) {
+<span class="fc" id="L19">        return funcionarioRepository.buscarComFiltros(</span>
+<span class="fc" id="L20">                        vazioParaNulo(nome), vazioParaNulo(cpf), vazioParaNulo(matricula), vazioParaNulo(empresa), cargoId, departamentoId, ativo)</span>
+<span class="fc" id="L21">                .stream()</span>
+<span class="fc" id="L22">                .map(this::paraResponseDTO)</span>
+<span class="fc" id="L23">                .toList();</span>
+    }
+
+    private String vazioParaNulo(String valor) {
+<span class="fc bfc" id="L27" title="All 4 branches covered.">        return (valor == null || valor.isBlank()) ? null : valor;</span>
+    }
+
+    public FuncionarioResponseDTO salvar(FuncionarioRequestDTO request) {
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        if (funcionarioRepository.existsByCpf(request.getCpf())) {</span>
+<span class="fc" id="L32">            throw new RuntimeException(&quot;Já existe um funcionário cadastrado com este CPF!&quot;);</span>
+        }
+
+<span class="fc" id="L35">        Funcionario funcionarioModel = new Funcionario();</span>
+<span class="fc" id="L36">        funcionarioModel.setNome(request.getNome().trim());</span>
+<span class="fc" id="L37">        funcionarioModel.setCpf(request.getCpf());</span>
+
+<span class="fc" id="L39">        Funcionario funcionarioSalvo = funcionarioRepository.save(funcionarioModel);</span>
+
+<span class="fc" id="L41">        return paraResponseDTO(funcionarioSalvo);</span>
+    }
+
+    public FuncionarioResponseDTO buscarPorId(Long id) {
+<span class="fc" id="L45">        Funcionario func = funcionarioRepository.findById(id)</span>
+<span class="fc" id="L46">                .orElseThrow(() -&gt; new RuntimeException(&quot;Funcionário não encontrado com o ID: &quot; + id));</span>
+
+<span class="fc" id="L48">        return paraResponseDTO(func);</span>
+    }
+
+    public FuncionarioResponseDTO editar(Long id, FuncionarioRequestDTO request) {
+<span class="fc" id="L52">        Funcionario funcExistente = funcionarioRepository.findById(id)</span>
+<span class="fc" id="L53">                .orElseThrow(() -&gt; new RuntimeException(&quot;Funcionário não encontrado para edição!&quot;));</span>
+
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        boolean cpfAlterado = !funcExistente.getCpf().equals(request.getCpf());</span>
+<span class="fc bfc" id="L56" title="All 4 branches covered.">        if (cpfAlterado &amp;&amp; funcionarioRepository.existsByCpf(request.getCpf())) {</span>
+<span class="fc" id="L57">            throw new RuntimeException(&quot;Já existe um funcionário cadastrado com este CPF!&quot;);</span>
+        }
+
+<span class="fc" id="L60">        funcExistente.setNome(request.getNome().trim());</span>
+<span class="fc" id="L61">        funcExistente.setCpf(request.getCpf());</span>
+
+<span class="fc" id="L63">        Funcionario funcAtualizado = funcionarioRepository.save(funcExistente);</span>
+
+<span class="fc" id="L65">        return paraResponseDTO(funcAtualizado);</span>
+    }
+
+    // Regra CLT: funcionário nunca é excluído do sistema, apenas inativado
+    public FuncionarioResponseDTO inativar(Long id) {
+<span class="fc" id="L70">        Funcionario func = funcionarioRepository.findById(id)</span>
+<span class="fc" id="L71">                .orElseThrow(() -&gt; new RuntimeException(&quot;Funcionário não encontrado para inativação!&quot;));</span>
+
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (Boolean.FALSE.equals(func.getAtivo())) {</span>
+<span class="fc" id="L74">            throw new RuntimeException(&quot;Funcionário já está inativo!&quot;);</span>
+        }
+
+<span class="fc" id="L77">        func.setAtivo(false);</span>
+<span class="fc" id="L78">        return paraResponseDTO(funcionarioRepository.save(func));</span>
+    }
+
+    public FuncionarioResponseDTO reativar(Long id) {
+<span class="fc" id="L82">        Funcionario func = funcionarioRepository.findById(id)</span>
+<span class="fc" id="L83">                .orElseThrow(() -&gt; new RuntimeException(&quot;Funcionário não encontrado para reativação!&quot;));</span>
+
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if (Boolean.TRUE.equals(func.getAtivo())) {</span>
+<span class="fc" id="L86">            throw new RuntimeException(&quot;Funcionário já está ativo!&quot;);</span>
+        }
+
+<span class="fc" id="L89">        func.setAtivo(true);</span>
+<span class="fc" id="L90">        return paraResponseDTO(funcionarioRepository.save(func));</span>
+    }
+
+    private FuncionarioResponseDTO paraResponseDTO(Funcionario func) {
+<span class="fc" id="L94">        return new FuncionarioResponseDTO(</span>
+<span class="fc" id="L95">                func.getId(),</span>
+<span class="fc" id="L96">                func.getNome(),</span>
+<span class="fc" id="L97">                func.getCpf(),</span>
+<span class="fc" id="L98">                func.getAtivo()</span>
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
