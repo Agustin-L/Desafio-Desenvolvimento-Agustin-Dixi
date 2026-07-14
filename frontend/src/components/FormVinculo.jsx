@@ -2,6 +2,7 @@ import { useState } from "react";
 import Modal from "./Modal.jsx";
 import vinculoApi from "../services/vinculoApi.js";
 import { extrairMensagemErro } from "../services/api.js";
+import { formatarCpf } from "../utils/cpf.js";
 
 export default function FormVinculo({ funcionarios, cargos, departamentos, onClose, onSalvo }) {
   const [funcionarioId, setFuncionarioId] = useState("");
@@ -35,7 +36,7 @@ export default function FormVinculo({ funcionarios, cargos, departamentos, onClo
   return (
     <Modal title="Vincular Funcionário" onClose={onClose}>
       <form onSubmit={handleSubmit}>
-        {erro && <div className="error-banner">{erro}</div>}
+        {erro && <div className="error-banner" role="alert">{erro}</div>}
 
         <div className="form-field">
           <label htmlFor="vinculo-funcionario">Funcionário</label>
@@ -44,14 +45,20 @@ export default function FormVinculo({ funcionarios, cargos, departamentos, onClo
             value={funcionarioId}
             onChange={(e) => setFuncionarioId(e.target.value)}
             required
+            aria-describedby="vinculo-funcionario-hint"
           >
             <option value="">Selecione uma opção</option>
             {funcionarios.map((f) => (
               <option key={f.id} value={f.id}>
-                {f.nome}
+                {f.nome} — {formatarCpf(f.cpf)}
               </option>
             ))}
           </select>
+          <span id="vinculo-funcionario-hint" className="field-hint">
+            {funcionarios.length === 0
+              ? "Nenhum funcionário cadastrado. Cadastre um na tela Funcionários."
+              : "Funcionário que será vinculado à empresa."}
+          </span>
         </div>
 
         <div className="form-row">
@@ -61,9 +68,13 @@ export default function FormVinculo({ funcionarios, cargos, departamentos, onClo
               id="vinculo-empresa"
               value={empresa}
               onChange={(e) => setEmpresa(e.target.value)}
-              placeholder="Escreva algo"
+              placeholder="Ex.: Dixi Tecnologia"
               required
+              aria-describedby="vinculo-empresa-hint"
             />
+            <span id="vinculo-empresa-hint" className="field-hint">
+              Nome da empresa contratante.
+            </span>
           </div>
           <div className="form-field">
             <label htmlFor="vinculo-matricula">Matrícula</label>
@@ -74,7 +85,11 @@ export default function FormVinculo({ funcionarios, cargos, departamentos, onClo
               placeholder="0000000000"
               inputMode="numeric"
               required
+              aria-describedby="vinculo-matricula-hint"
             />
+            <span id="vinculo-matricula-hint" className="field-hint">
+              Somente números.
+            </span>
           </div>
         </div>
 
@@ -86,6 +101,7 @@ export default function FormVinculo({ funcionarios, cargos, departamentos, onClo
               value={cargoId}
               onChange={(e) => setCargoId(e.target.value)}
               required
+              aria-describedby={cargos.length === 0 ? "vinculo-cargo-hint" : undefined}
             >
               <option value="">Selecione uma opção</option>
               {cargos.map((c) => (
@@ -94,6 +110,11 @@ export default function FormVinculo({ funcionarios, cargos, departamentos, onClo
                 </option>
               ))}
             </select>
+            {cargos.length === 0 && (
+              <span id="vinculo-cargo-hint" className="field-hint">
+                Nenhum cargo cadastrado. Cadastre um na tela Cargos.
+              </span>
+            )}
           </div>
           <div className="form-field">
             <label htmlFor="vinculo-departamento">Departamento</label>
@@ -102,6 +123,7 @@ export default function FormVinculo({ funcionarios, cargos, departamentos, onClo
               value={departamentoId}
               onChange={(e) => setDepartamentoId(e.target.value)}
               required
+              aria-describedby={departamentos.length === 0 ? "vinculo-departamento-hint" : undefined}
             >
               <option value="">Selecione uma opção</option>
               {departamentos.map((d) => (
@@ -110,6 +132,11 @@ export default function FormVinculo({ funcionarios, cargos, departamentos, onClo
                 </option>
               ))}
             </select>
+            {departamentos.length === 0 && (
+              <span id="vinculo-departamento-hint" className="field-hint">
+                Nenhum departamento cadastrado. Cadastre um na tela Departamentos.
+              </span>
+            )}
           </div>
         </div>
 

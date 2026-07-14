@@ -1,4 +1,4 @@
-export default function TabelaVinculos({ vinculos, onDesvincular }) {
+export default function TabelaVinculos({ vinculos, cargos = [], onDesvincular }) {
   if (vinculos.length === 0) {
     return (
       <div className="table-card">
@@ -21,12 +21,14 @@ export default function TabelaVinculos({ vinculos, onDesvincular }) {
           </tr>
         </thead>
         <tbody>
-          {vinculos.map((v) => (
+          {vinculos.map((v) => {
+            const cargoDescricao = cargos.find((c) => String(c.id) === String(v.cargoId))?.descricao;
+            return (
             <tr key={v.id}>
               <td>{v.funcionarioNome}</td>
               <td>{v.empresa}</td>
               <td>{v.matricula}</td>
-              <td>{v.cargoCodigo}</td>
+              <td>{cargoDescricao ? `${v.cargoCodigo} — ${cargoDescricao}` : v.cargoCodigo}</td>
               <td>{v.departamentoNome}</td>
               <td>
                 <button
@@ -35,14 +37,16 @@ export default function TabelaVinculos({ vinculos, onDesvincular }) {
                   role="switch"
                   aria-checked="true"
                   aria-label={`Desvincular ${v.funcionarioNome} de ${v.empresa}`}
-                  title="Clique para desvincular"
-                  onClick={() => onDesvincular(v)}
+                  title={onDesvincular ? "Clique para desvincular" : "Apenas administradores podem desvincular"}
+                  onClick={onDesvincular ? () => onDesvincular(v) : undefined}
+                  disabled={!onDesvincular}
                 >
                   <span className="switch__thumb" />
                 </button>
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>

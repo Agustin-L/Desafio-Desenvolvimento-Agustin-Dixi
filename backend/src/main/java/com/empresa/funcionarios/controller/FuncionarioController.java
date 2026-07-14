@@ -26,9 +26,10 @@ public class FuncionarioController {
             @RequestParam(required = false) String matricula,
             @RequestParam(required = false) String empresa,
             @RequestParam(required = false) Long cargoId,
-            @RequestParam(required = false) Long departamentoId
+            @RequestParam(required = false) Long departamentoId,
+            @RequestParam(required = false) Boolean ativo
     ) {
-        return ResponseEntity.ok(funcionarioService.listarComFiltros(nome, cpf, matricula, empresa, cargoId, departamentoId));
+        return ResponseEntity.ok(funcionarioService.listarComFiltros(nome, cpf, matricula, empresa, cargoId, departamentoId, ativo));
     }
 
     @GetMapping("/{id}")
@@ -47,9 +48,14 @@ public class FuncionarioController {
         return ResponseEntity.ok(funcionarioService.editar(id, request));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
-        funcionarioService.deletar(id);
-        return ResponseEntity.noContent().build();
+    // Regra CLT: não existe exclusão de funcionário — apenas inativação/reativação
+    @PatchMapping("/{id}/inativar")
+    public ResponseEntity<FuncionarioResponseDTO> inativar(@PathVariable Long id) {
+        return ResponseEntity.ok(funcionarioService.inativar(id));
+    }
+
+    @PatchMapping("/{id}/reativar")
+    public ResponseEntity<FuncionarioResponseDTO> reativar(@PathVariable Long id) {
+        return ResponseEntity.ok(funcionarioService.reativar(id));
     }
 }

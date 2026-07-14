@@ -20,7 +20,7 @@ export default function Login() {
     setEntrando(true);
 
     try {
-      const dados = await authApi.login({ username, senha });
+      const dados = await authApi.login({ username: username.trim(), senha });
       login(dados);
       const destino = location.state?.from || "/funcionarios";
       navigate(destino, { replace: true });
@@ -38,26 +38,39 @@ export default function Login() {
         <h1>Dixi</h1>
         <p>Entre com seu usuário e senha para continuar.</p>
 
-        {erro && <div className="error-banner">{erro}</div>}
+        {erro && <div className="error-banner" role="alert">{erro}</div>}
 
         <div className="form-field">
           <label htmlFor="login-username">Usuário</label>
           <input
             id="login-username"
+            name="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            placeholder="Ex.: joao.silva"
+            autoComplete="username"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            aria-describedby="login-username-hint"
             required
             autoFocus
           />
+          <span id="login-username-hint" className="field-hint">
+            Usuário de acesso criado por um administrador.
+          </span>
         </div>
 
         <div className="form-field">
           <label htmlFor="login-senha">Senha</label>
           <input
             id="login-senha"
+            name="password"
             type="password"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
+            placeholder="Digite sua senha"
+            autoComplete="current-password"
             required
           />
         </div>

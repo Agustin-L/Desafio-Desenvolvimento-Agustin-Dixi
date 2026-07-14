@@ -2,6 +2,8 @@ package com.empresa.funcionarios.service;
 
 import com.empresa.funcionarios.dto.request.UsuarioRequestDTO;
 import com.empresa.funcionarios.dto.response.UsuarioResponseDTO;
+import com.empresa.funcionarios.exception.RecursoNaoEncontradoException;
+import com.empresa.funcionarios.exception.RegraDeNegocioException;
 import com.empresa.funcionarios.model.Perfil;
 import com.empresa.funcionarios.model.Usuario;
 import com.empresa.funcionarios.repository.UsuarioRepository;
@@ -28,13 +30,13 @@ public class UsuarioService {
 
     public UsuarioResponseDTO salvar(UsuarioRequestDTO request) {
         if (request.getUsername() == null || request.getUsername().isBlank()) {
-            throw new RuntimeException("Informe o nome de usuário!");
+            throw new RegraDeNegocioException("Informe o nome de usuário!");
         }
         if (usuarioRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Já existe um usuário cadastrado com este nome de acesso!");
+            throw new RegraDeNegocioException("Já existe um usuário cadastrado com este nome de acesso!");
         }
         if (request.getSenha() == null || request.getSenha().length() < 6) {
-            throw new RuntimeException("A senha deve ter no mínimo 6 caracteres!");
+            throw new RegraDeNegocioException("A senha deve ter no mínimo 6 caracteres!");
         }
 
         Usuario usuario = new Usuario();
@@ -49,10 +51,10 @@ public class UsuarioService {
 
     public void deletar(Long id, String usernameLogado) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado para exclusão!"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado para exclusão!"));
 
         if (usuario.getUsername().equals(usernameLogado)) {
-            throw new RuntimeException("Você não pode excluir o seu próprio acesso!");
+            throw new RegraDeNegocioException("Você não pode excluir o seu próprio acesso!");
         }
 
         usuarioRepository.deleteById(id);

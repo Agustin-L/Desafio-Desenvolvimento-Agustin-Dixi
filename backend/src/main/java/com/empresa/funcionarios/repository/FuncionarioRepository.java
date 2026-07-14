@@ -20,6 +20,7 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Long> 
             "AND (:empresa IS NULL OR LOWER(v.empresa) LIKE LOWER(CONCAT('%', :empresa, '%'))) " +
             "AND (:cargoId IS NULL OR v.cargo.id = :cargoId) " +
             "AND (:departamentoId IS NULL OR v.departamento.id = :departamentoId) " +
+            "AND (:ativo IS NULL OR f.ativo = :ativo) " +
             "ORDER BY f.nome")
     List<Funcionario> buscarComFiltros(
             @Param("nome") String nome,
@@ -27,6 +28,11 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Long> 
             @Param("matricula") String matricula,
             @Param("empresa") String empresa,
             @Param("cargoId") Long cargoId,
-            @Param("departamentoId") Long departamentoId
+            @Param("departamentoId") Long departamentoId,
+            @Param("ativo") Boolean ativo
     );
+
+    long countByAtivoTrue();
+
+    long countByAtivoFalse();
 }

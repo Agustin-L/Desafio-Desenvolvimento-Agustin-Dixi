@@ -5,14 +5,16 @@ public class FuncionarioResponseDTO {
     private Long id;
     private String nome;
     private String cpf;
+    private Boolean ativo;
 
     public FuncionarioResponseDTO() {
     }
 
-    public FuncionarioResponseDTO(Long id, String nome, String cpf) {
+    public FuncionarioResponseDTO(Long id, String nome, String cpf, Boolean ativo) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
+        this.ativo = ativo;
     }
 
     public Long getId() {
@@ -27,6 +29,10 @@ public class FuncionarioResponseDTO {
         return cpf;
     }
 
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -37,5 +43,9 @@ public class FuncionarioResponseDTO {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 }

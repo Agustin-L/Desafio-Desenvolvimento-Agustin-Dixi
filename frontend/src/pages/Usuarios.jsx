@@ -48,10 +48,15 @@ export default function Usuarios() {
     }
   }
 
-  async function handleExcluir(id) {
+  async function handleExcluir(usuario) {
+    const confirmar = window.confirm(
+      `Excluir o usuário ${usuario.username}? Esta ação não pode ser desfeita.`
+    );
+    if (!confirmar) return;
+
     setErro("");
     try {
-      await usuarioApi.excluir(id);
+      await usuarioApi.excluir(usuario.id);
       await carregar();
     } catch (err) {
       setErro(extrairMensagemErro(err, "Não foi possível excluir o usuário."));
@@ -69,38 +74,66 @@ export default function Usuarios() {
         </div>
       </div>
 
-      {erro && <div className="error-banner">{erro}</div>}
+      {erro && <div className="error-banner" role="alert">{erro}</div>}
 
       <div className="table-card" style={{ marginBottom: 24 }}>
         <form onSubmit={handleCriar} className="form-row" style={{ padding: 18, alignItems: "flex-end", flexWrap: "wrap" }}>
           <div className="form-field" style={{ marginBottom: 0 }}>
-            <label>Usuário</label>
-            <input value={username} onChange={(e) => setUsername(e.target.value)} required />
+            <label htmlFor="user-username">Usuário</label>
+            <input
+              id="user-username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))}
+              required
+              minLength={3}
+              placeholder="Ex.: joao.silva"
+              autoComplete="off"
+              autoCapitalize="none"
+              spellCheck={false}
+              aria-describedby="user-username-hint"
+            />
+            <span id="user-username-hint" className="field-hint">
+              Mínimo de 3 caracteres, sem espaços.
+            </span>
           </div>
           <div className="form-field" style={{ marginBottom: 0 }}>
-            <label>Senha</label>
+            <label htmlFor="user-senha">Senha</label>
             <input
+              id="user-senha"
               type="password"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required
               minLength={6}
-              placeholder="mínimo 6 caracteres"
+              autoComplete="new-password"
+              aria-describedby="user-senha-hint"
             />
+            <span id="user-senha-hint" className="field-hint">
+              Mínimo de 6 caracteres.
+            </span>
           </div>
           <div className="form-field" style={{ marginBottom: 0 }}>
-            <label>Perfil</label>
-            <select value={perfil} onChange={(e) => setPerfil(e.target.value)}>
+            <label htmlFor="user-perfil">Perfil</label>
+            <select
+              id="user-perfil"
+              value={perfil}
+              onChange={(e) => setPerfil(e.target.value)}
+              aria-describedby="user-perfil-hint"
+            >
               <option value="PADRAO">Padrão</option>
               <option value="ADMIN">Administrador</option>
             </select>
+            <span id="user-perfil-hint" className="field-hint">
+              Administradores podem criar e excluir usuários.
+            </span>
           </div>
-          <button type="submit" className="btn btn--solid" disabled={salvando}>
+          {/* compensa a altura do hint para o botão alinhar com os inputs */}
+          <button type="submit" className="btn btn--solid" disabled={salvando} style={{ marginBottom: 23 }}>
             {salvando ? (
               "Criando..."
             ) : (
               <>
-                <span className="material-symbols-outlined">add</span> Novo Usuário
+                <span className="material-symbols-outlined" aria-hidden="true">add</span> Novo Usuário
               </>
             )}
           </button>
@@ -108,7 +141,7 @@ export default function Usuarios() {
       </div>
 
       {carregando ? (
-        <div className="loading-state">Carregando...</div>
+        <div className="loading-state" role="status">Carregando...</div>
       ) : usuarios.length === 0 ? (
         <div className="table-card">
           <div className="empty-state">Nenhum usuário cadastrado.</div>
@@ -137,9 +170,9 @@ export default function Usuarios() {
                           ? "Você não pode excluir seu próprio acesso"
                           : "Excluir usuário"
                       }
-                      onClick={() => handleExcluir(u.id)}
+                      onClick={() => handleExcluir(u)}
                     >
-                      <span className="material-symbols-outlined">delete</span> Excluir
+                      <span className="material-symbols-outlined" aria-hidden="true">delete</span> Excluir
                     </button>
                   </td>
                 </tr>

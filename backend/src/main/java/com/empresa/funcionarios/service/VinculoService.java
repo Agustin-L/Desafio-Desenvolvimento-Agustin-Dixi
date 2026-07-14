@@ -2,6 +2,8 @@ package com.empresa.funcionarios.service;
 
 import com.empresa.funcionarios.dto.request.VinculoRequestDTO;
 import com.empresa.funcionarios.dto.response.VinculoResponseDTO;
+import com.empresa.funcionarios.exception.RecursoNaoEncontradoException;
+import com.empresa.funcionarios.exception.RegraDeNegocioException;
 import com.empresa.funcionarios.model.Cargo;
 import com.empresa.funcionarios.model.Departamento;
 import com.empresa.funcionarios.model.Funcionario;
@@ -44,13 +46,17 @@ public class VinculoService {
 
     public VinculoResponseDTO salvar(VinculoRequestDTO request) {
         Funcionario funcionario = funcionarioRepository.findById(request.getFuncionarioId())
-                .orElseThrow(() -> new RuntimeException("Funcionário informado não existe!"));
+                .orElseThrow(() -> new RegraDeNegocioException("Funcionário informado não existe!"));
+
+        if (Boolean.FALSE.equals(funcionario.getAtivo())) {
+            throw new RegraDeNegocioException("Não é possível criar vínculo para funcionário inativo!");
+        }
 
         Cargo cargo = cargoRepository.findById(request.getCargoId())
-                .orElseThrow(() -> new RuntimeException("Cargo informado não existe!"));
+                .orElseThrow(() -> new RegraDeNegocioException("Cargo informado não existe!"));
 
         Departamento departamento = departamentoRepository.findById(request.getDepartamentoId())
-                .orElseThrow(() -> new RuntimeException("Departamento informado não existe!"));
+                .orElseThrow(() -> new RegraDeNegocioException("Departamento informado não existe!"));
 
         Vinculo vinculoModel = new Vinculo();
         vinculoModel.setEmpresa(request.getEmpresa());
@@ -66,20 +72,20 @@ public class VinculoService {
 
     public VinculoResponseDTO buscarPorId(Long id) {
         Vinculo vinculo = vinculoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vínculo não encontrado com o ID: " + id));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Vínculo não encontrado com o ID: " + id));
 
         return paraResponseDTO(vinculo);
     }
 
     public VinculoResponseDTO editar(Long id, VinculoRequestDTO request) {
         Vinculo vinculoExistente = vinculoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vínculo não encontrado para edição!"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Vínculo não encontrado para edição!"));
 
         Cargo cargo = cargoRepository.findById(request.getCargoId())
-                .orElseThrow(() -> new RuntimeException("Cargo informado não existe!"));
+                .orElseThrow(() -> new RegraDeNegocioException("Cargo informado não existe!"));
 
         Departamento departamento = departamentoRepository.findById(request.getDepartamentoId())
-                .orElseThrow(() -> new RuntimeException("Departamento informado não existe!"));
+                .orElseThrow(() -> new RegraDeNegocioException("Departamento informado não existe!"));
 
         vinculoExistente.setEmpresa(request.getEmpresa());
         vinculoExistente.setMatricula(request.getMatricula());
@@ -93,7 +99,7 @@ public class VinculoService {
 
     public void deletar(Long id) {
         if (!vinculoRepository.existsById(id)) {
-            throw new RuntimeException("Vínculo não encontrado para exclusão!");
+            throw new RecursoNaoEncontradoException("Vínculo não encontrado para exclusão!");
         }
         vinculoRepository.deleteById(id);
     }

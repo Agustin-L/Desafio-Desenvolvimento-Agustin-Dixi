@@ -28,6 +28,7 @@ function AreaLogada() {
               </RotaProtegida>
             }
           />
+          <Route path="*" element={<Navigate to="/funcionarios" replace />} />
         </Routes>
       </main>
     </div>

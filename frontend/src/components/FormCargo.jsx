@@ -16,7 +16,7 @@ export default function FormCargo({ cargo, onClose, onSalvo }) {
     setSalvando(true);
 
     try {
-      const dados = { codigo, descricao };
+      const dados = { codigo: codigo.trim(), descricao: descricao.trim() };
       if (editando) {
         await cargoApi.editar(cargo.id, dados);
       } else {
@@ -33,7 +33,7 @@ export default function FormCargo({ cargo, onClose, onSalvo }) {
   return (
     <Modal title={editando ? "Editar Cargo" : "Novo Cargo"} onClose={onClose}>
       <form onSubmit={handleSubmit}>
-        {erro && <div className="error-banner">{erro}</div>}
+        {erro && <div className="error-banner" role="alert">{erro}</div>}
 
         <div className="form-field">
           <label htmlFor="cargo-codigo">Código</label>
@@ -41,9 +41,16 @@ export default function FormCargo({ cargo, onClose, onSalvo }) {
             id="cargo-codigo"
             value={codigo}
             onChange={(e) => setCodigo(e.target.value)}
+            placeholder="Ex.: 001"
             required
             disabled={editando}
+            aria-describedby="cargo-codigo-hint"
           />
+          <span id="cargo-codigo-hint" className="field-hint">
+            {editando
+              ? "O código não pode ser alterado após o cadastro."
+              : "Identificador único do cargo. Não poderá ser alterado depois."}
+          </span>
         </div>
 
         <div className="form-field">
@@ -52,8 +59,13 @@ export default function FormCargo({ cargo, onClose, onSalvo }) {
             id="cargo-descricao"
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
+            placeholder="Ex.: Analista de Sistemas"
             required
+            aria-describedby="cargo-descricao-hint"
           />
+          <span id="cargo-descricao-hint" className="field-hint">
+            Nome do cargo, exibido nas listagens e nas opções de seleção.
+          </span>
         </div>
 
         <div className="modal-footer" style={{ padding: 0, border: "none", marginTop: 20 }}>

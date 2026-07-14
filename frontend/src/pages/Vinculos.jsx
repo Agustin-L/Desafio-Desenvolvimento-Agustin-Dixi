@@ -6,6 +6,7 @@ import funcionarioApi from "../services/funcionarioApi.js";
 import cargoApi from "../services/cargoApi.js";
 import departamentoApi from "../services/departamentoApi.js";
 import { extrairMensagemErro } from "../services/api.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const FILTROS_INICIAIS = {
   nome: "",
@@ -15,6 +16,7 @@ const FILTROS_INICIAIS = {
 };
 
 export default function Vinculos() {
+  const { isAdmin } = useAuth();
   const [vinculos, setVinculos] = useState([]);
   const [funcionarios, setFuncionarios] = useState([]);
   const [cargos, setCargos] = useState([]);
@@ -25,9 +27,11 @@ export default function Vinculos() {
   const [mostrarForm, setMostrarForm] = useState(false);
 
   useEffect(() => {
-    funcionarioApi.listar().then(setFuncionarios).catch(() => {});
-    cargoApi.listar().then(setCargos).catch(() => {});
-    departamentoApi.listar().then(setDepartamentos).catch(() => {});
+    const aoFalhar = (err) =>
+      setErro(extrairMensagemErro(err, "Não foi possível carregar as listas de apoio."));
+    funcionarioApi.listar().then(setFuncionarios).catch(aoFalhar);
+    cargoApi.listar().then(setCargos).catch(aoFalhar);
+    departamentoApi.listar().then(setDepartamentos).catch(aoFalhar);
     carregar();
   }, []);
 
@@ -89,34 +93,40 @@ export default function Vinculos() {
         </div>
         <div className="page-header__actions">
           <button className="btn btn--solid" onClick={() => setMostrarForm(true)}>
-            <span className="material-symbols-outlined">add</span> Vincular Funcionário
+            <span className="material-symbols-outlined" aria-hidden="true">add</span> Vincular Funcionário
           </button>
         </div>
       </div>
 
-      {erro && <div className="error-banner">{erro}</div>}
+      {erro && <div className="error-banner" role="alert">{erro}</div>}
 
       <div className="filter-card">
         <div className="filter-field">
-          <label>Funcionário</label>
+          <label htmlFor="vfiltro-nome">Funcionário</label>
           <input
+            id="vfiltro-nome"
             placeholder="Procure pelo funcionário"
             value={filtros.nome}
             onChange={(e) => atualizarFiltro("nome", e.target.value)}
           />
         </div>
         <div className="filter-field">
-          <label>Empresa</label>
+          <label htmlFor="vfiltro-empresa">Empresa</label>
           <input
+            id="vfiltro-empresa"
             placeholder="Procure pela empresa"
             value={filtros.empresa}
             onChange={(e) => atualizarFiltro("empresa", e.target.value)}
           />
         </div>
         <div className="filter-field">
-          <label>Cargo</label>
-          <select value={filtros.cargoId} onChange={(e) => atualizarFiltro("cargoId", e.target.value)}>
-            <option value="">Selecione uma opção</option>
+          <label htmlFor="vfiltro-cargo">Cargo</label>
+          <select
+            id="vfiltro-cargo"
+            value={filtros.cargoId}
+            onChange={(e) => atualizarFiltro("cargoId", e.target.value)}
+          >
+            <option value="">Todos os cargos</option>
             {cargos.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.codigo} — {c.descricao}
@@ -125,12 +135,13 @@ export default function Vinculos() {
           </select>
         </div>
         <div className="filter-field">
-          <label>Departamento</label>
+          <label htmlFor="vfiltro-departamento">Departamento</label>
           <select
+            id="vfiltro-departamento"
             value={filtros.departamentoId}
             onChange={(e) => atualizarFiltro("departamentoId", e.target.value)}
           >
-            <option value="">Selecione uma opção</option>
+            <option value="">Todos os departamentos</option>
             {departamentos.map((d) => (
               <option key={d.id} value={d.id}>
                 {d.codigo} — {d.descricao}
@@ -140,12 +151,14 @@ export default function Vinculos() {
         </div>
       </div>
 
-      <p className="filter-hint">Clique no switch para desvincular o funcionário.</p>
+      <p className="filter-hint">
+        Clique no botão da coluna Vinculado para desvincular o funcionário.
+      </p>
 
       {carregando ? (
-        <div className="loading-state">Carregando...</div>
+        <div className="loading-state" role="status">Carregando...</div>
       ) : (
-        <TabelaVinculos vinculos={vinculosFiltrados} onDesvincular={handleDesvincular} />
+        <TabelaVinculos vinculos={vinculosFiltrados} cargos={cargos} onDesvincular={isAdmin ? handleDesvincular : undefined} />
       )}
 
       {mostrarForm && (

@@ -10,4 +10,8 @@ import java.util.List;
 public interface VinculoRepository extends JpaRepository<Vinculo, Long> {
 
     List<Vinculo> findByFuncionarioId(Long funcionarioId);
+
+    boolean existsByCargoId(Long cargoId);
+
+    boolean existsByDepartamentoId(Long departamentoId);
 }

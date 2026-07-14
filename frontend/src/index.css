@@ -432,6 +432,17 @@ table.data-table {
   color: var(--color-danger);
 }
 
+.field-hint {
+  font-size: 12px;
+  /* tom mais escuro que --color-text-muted: garante contraste >= 4.5:1 (WCAG AA) sobre branco */
+  color: #61707d;
+}
+
+.data-table tbody tr.clickable:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
 .form-row {
   display: flex;
   gap: 14px;
@@ -559,7 +570,8 @@ table.data-table {
   .sidebar {
     width: 72px;
   }
-  .sidebar__link span {
+  /* esconde só o texto do link; o ícone continua visível */
+  .sidebar__link span:not(.sidebar__icon) {
     display: none;
   }
   .content {
@@ -606,4 +618,26 @@ table.data-table {
 
 .switch--on .switch__thumb {
   left: 20px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge--ativo {
+  background: #e3f4e8;
+  color: #1e7a3c;
+}
+
+.badge--inativo {
+  background: #fdecea;
+  color: var(--color-danger);
+}
+
+.data-table tr.linha-inativa td {
+  color: var(--color-text-muted);
 }

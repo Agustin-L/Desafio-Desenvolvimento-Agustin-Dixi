@@ -14,28 +14,28 @@ export default function Sidebar() {
 
       <nav className="sidebar__nav">
         <NavLink to="/funcionarios" className={linkClass}>
-          <span className="material-symbols-outlined sidebar__icon">badge</span>
+          <span className="material-symbols-outlined sidebar__icon" aria-hidden="true">badge</span>
           <span>Funcionário</span>
         </NavLink>
 
         <NavLink to="/cargos" className={linkClass}>
-          <span className="material-symbols-outlined sidebar__icon">work</span>
+          <span className="material-symbols-outlined sidebar__icon" aria-hidden="true">work</span>
           <span>Cargo</span>
         </NavLink>
 
         <NavLink to="/departamentos" className={linkClass}>
-          <span className="material-symbols-outlined sidebar__icon">apartment</span>
+          <span className="material-symbols-outlined sidebar__icon" aria-hidden="true">apartment</span>
           <span>Departamento</span>
         </NavLink>
 
         <NavLink to="/vinculos" className={linkClass}>
-          <span className="material-symbols-outlined sidebar__icon">link</span>
+          <span className="material-symbols-outlined sidebar__icon" aria-hidden="true">link</span>
           <span>Vínculos</span>
         </NavLink>
 
         {isAdmin && (
           <NavLink to="/usuarios" className={linkClass}>
-            <span className="material-symbols-outlined sidebar__icon">group</span>
+            <span className="material-symbols-outlined sidebar__icon" aria-hidden="true">group</span>
             <span>Usuários</span>
           </NavLink>
         )}
@@ -46,7 +46,7 @@ export default function Sidebar() {
           {usuario?.username}
         </span>
         <button className="sidebar__logout" onClick={logout} title="Sair">
-          <span className="material-symbols-outlined">logout</span>
+          <span className="material-symbols-outlined" aria-hidden="true">logout</span>
           Sair
         </button>
       </div>

@@ -16,7 +16,7 @@ export default function FormDepartamento({ departamento, onClose, onSalvo }) {
     setSalvando(true);
 
     try {
-      const dados = { codigo, descricao };
+      const dados = { codigo: codigo.trim(), descricao: descricao.trim() };
       if (editando) {
         await departamentoApi.editar(departamento.id, dados);
       } else {
@@ -33,7 +33,7 @@ export default function FormDepartamento({ departamento, onClose, onSalvo }) {
   return (
     <Modal title={editando ? "Editar Departamento" : "Novo Departamento"} onClose={onClose}>
       <form onSubmit={handleSubmit}>
-        {erro && <div className="error-banner">{erro}</div>}
+        {erro && <div className="error-banner" role="alert">{erro}</div>}
 
         <div className="form-field">
           <label htmlFor="depto-codigo">Código</label>
@@ -41,9 +41,16 @@ export default function FormDepartamento({ departamento, onClose, onSalvo }) {
             id="depto-codigo"
             value={codigo}
             onChange={(e) => setCodigo(e.target.value)}
+            placeholder="Ex.: 001"
             required
             disabled={editando}
+            aria-describedby="depto-codigo-hint"
           />
+          <span id="depto-codigo-hint" className="field-hint">
+            {editando
+              ? "O código não pode ser alterado por esta tela."
+              : "Identificador único do departamento."}
+          </span>
         </div>
 
         <div className="form-field">
@@ -52,8 +59,13 @@ export default function FormDepartamento({ departamento, onClose, onSalvo }) {
             id="depto-descricao"
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
+            placeholder="Ex.: Recursos Humanos"
             required
+            aria-describedby="depto-descricao-hint"
           />
+          <span id="depto-descricao-hint" className="field-hint">
+            Nome do departamento, exibido nas listagens e nos vínculos.
+          </span>
         </div>
 
         <div className="modal-footer" style={{ padding: 0, border: "none", marginTop: 20 }}>

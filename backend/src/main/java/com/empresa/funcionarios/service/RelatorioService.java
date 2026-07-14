@@ -32,6 +32,8 @@ public class RelatorioService {
         Map<String, Object> dados = new HashMap<>();
 
         dados.put("totalFuncionarios", funcionarioRepository.count());
+        dados.put("totalFuncionariosAtivos", funcionarioRepository.countByAtivoTrue());
+        dados.put("totalFuncionariosInativos", funcionarioRepository.countByAtivoFalse());
         dados.put("totalCargos", cargoRepository.count());
         dados.put("totalDepartamentos", departamentoRepository.count());
         dados.put("totalVinculos", vinculoRepository.count());
@@ -41,20 +43,22 @@ public class RelatorioService {
 
     public String gerarRelatorioFuncionariosCsv() {
         StringBuilder csv = new StringBuilder();
-        csv.append("Nome;CPF;Empresa;Matricula;Cargo;Departamento\n");
+        csv.append("Nome;CPF;Situacao;Empresa;Matricula;Cargo;Departamento\n");
 
         List<Funcionario> funcionarios = funcionarioRepository.findAll();
 
         for (Funcionario funcionario : funcionarios) {
             List<Vinculo> vinculos = vinculoRepository.findByFuncionarioId(funcionario.getId());
+            String situacao = Boolean.FALSE.equals(funcionario.getAtivo()) ? "Inativo" : "Ativo";
 
             if (vinculos.isEmpty()) {
-                csv.append(linhaCsv(funcionario.getNome(), funcionario.getCpf(), "", "", "", ""));
+                csv.append(linhaCsv(funcionario.getNome(), formatarCpf(funcionario.getCpf()), situacao, "", "", "", ""));
             } else {
                 for (Vinculo vinculo : vinculos) {
                     csv.append(linhaCsv(
                             funcionario.getNome(),
-                            funcionario.getCpf(),
+                            formatarCpf(funcionario.getCpf()),
+                            situacao,
                             vinculo.getEmpresa(),
                             vinculo.getMatricula(),
                             vinculo.getCargo().getCodigo(),
@@ -67,7 +71,15 @@ public class RelatorioService {
         return csv.toString();
     }
 
-    private String linhaCsv(String nome, String cpf, String empresa, String matricula, String cargo, String departamento) {
-        return String.join(";", nome, cpf, empresa, matricula, cargo, departamento) + "\n";
+    private String linhaCsv(String nome, String cpf, String situacao, String empresa, String matricula, String cargo, String departamento) {
+        return String.join(";", nome, cpf, situacao, empresa, matricula, cargo, departamento) + "\n";
+    }
+
+    // CPF é armazenado só com dígitos; máscara aplicada apenas para exibição
+    private String formatarCpf(String cpf) {
+        if (cpf == null || !cpf.matches("\\d{11}")) {
+            return cpf == null ? "" : cpf;
+        }
+        return cpf.substring(0, 3) + "." + cpf.substring(3, 6) + "." + cpf.substring(6, 9) + "-" + cpf.substring(9);
     }
 }

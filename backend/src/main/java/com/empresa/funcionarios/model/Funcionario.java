@@ -16,6 +16,10 @@ public class Funcionario{
     @Column(nullable = false)
     private String nome;
 
+    // Regra CLT: funcionário nunca é excluído, apenas inativado
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean ativo = true;
+
     public Funcionario(){
     }
 
@@ -31,11 +35,19 @@ public class Funcionario{
         return nome;
     }
 
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 }

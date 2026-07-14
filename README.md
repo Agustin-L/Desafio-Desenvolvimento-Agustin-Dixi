@@ -68,6 +68,25 @@ docker-compose up --build
 - **Departamento**: codigo, descricao
 - **Vinculo**: liga um Funcionario a uma Empresa, com matricula, cargo e departamento
 
-## Observação
+## Testes
 
-Os testes automatizados (JUnit em `backend/src/test` e Cypress em `cypress/e2e`) ainda estão como esqueletos vazios e precisam ser implementados.
+### Backend (JUnit 5 + Mockito + JaCoCo)
+```
+cd backend
+mvnw test
+```
+Não precisa de Maven instalado (o projeto inclui o Maven Wrapper). Relatório de cobertura: `backend/target/site/jacoco/index.html`. O build **falha** se a cobertura de linhas dos pacotes `service` e `validation` ficar abaixo de 80%.
+
+### Frontend (Vitest)
+```
+cd frontend
+npm install
+npm run test:coverage
+```
+Relatório de cobertura: `frontend/coverage/index.html` (threshold de 80% de linhas em `src/utils` e `src/services`, configurado no `vite.config.js`).
+
+Achados e pendências mapeados durante a implementação dos testes: `docs/ACHADOS-TESTES.md`.
+
+### Observação
+
+Os testes E2E (Cypress) ainda serão implementados.

@@ -52,7 +52,7 @@ export default function FormFuncionario({ funcionario, onClose, onSalvo }) {
 
     setSalvando(true);
     try {
-      const dados = { nome: nome.trim(), cpf: formatarCpf(cpf) };
+      const dados = { nome: nome.trim(), cpf: limparCpf(cpf) };
       if (editando) {
         await funcionarioApi.editar(funcionario.id, dados);
       } else {
@@ -69,7 +69,7 @@ export default function FormFuncionario({ funcionario, onClose, onSalvo }) {
   return (
     <Modal title={editando ? "Editar Funcionário" : "Novo Funcionário"} onClose={onClose}>
       <form onSubmit={handleSubmit} noValidate>
-        {erro && <div className="error-banner">{erro}</div>}
+        {erro && <div className="error-banner" role="alert">{erro}</div>}
 
         <div className={"form-field" + (erros.nome ? " form-field--invalid" : "")}>
           <label htmlFor="func-nome">Nome</label>
@@ -77,11 +77,21 @@ export default function FormFuncionario({ funcionario, onClose, onSalvo }) {
             id="func-nome"
             value={nome}
             onChange={handleNomeChange}
-            placeholder="Nome completo"
+            placeholder="Ex.: Maria da Silva Santos"
             autoComplete="off"
             required
+            aria-describedby="func-nome-ajuda"
+            aria-invalid={Boolean(erros.nome)}
           />
-          {erros.nome && <span className="field-error">{erros.nome}</span>}
+          {erros.nome ? (
+            <span id="func-nome-ajuda" className="field-error" role="alert">
+              {erros.nome}
+            </span>
+          ) : (
+            <span id="func-nome-ajuda" className="field-hint">
+              Nome completo do funcionário, sem números.
+            </span>
+          )}
         </div>
 
         <div className={"form-field" + (erros.cpf ? " form-field--invalid" : "")}>
@@ -95,8 +105,18 @@ export default function FormFuncionario({ funcionario, onClose, onSalvo }) {
             autoComplete="off"
             maxLength={14}
             required
+            aria-describedby="func-cpf-ajuda"
+            aria-invalid={Boolean(erros.cpf)}
           />
-          {erros.cpf && <span className="field-error">{erros.cpf}</span>}
+          {erros.cpf ? (
+            <span id="func-cpf-ajuda" className="field-error" role="alert">
+              {erros.cpf}
+            </span>
+          ) : (
+            <span id="func-cpf-ajuda" className="field-hint">
+              Digite apenas os números — a máscara é aplicada automaticamente.
+            </span>
+          )}
         </div>
 
         <div className="modal-footer" style={{ padding: 0, border: "none", marginTop: 20 }}>
