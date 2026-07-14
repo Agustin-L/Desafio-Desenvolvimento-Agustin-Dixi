@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: ./backend
+    container_name: dixi-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - dixi-data:/app/data
+
+  frontend:
+    build: ./frontend
+    container_name: dixi-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  dixi-data:
